@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
+
 import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
     IntentFilter writeTagFilters[];
     TextView tvNFCContent;
     Tag myTag;
-    Context context;
+    Context context = this;
 
     ImageView s;
+    TabLayout tabLayout;
+
     private float offsetY = 900;
     private float offsetX = 900;
     private float scaleValue = 300;
@@ -37,10 +42,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //get refs
+        tabLayout = findViewById(R.id.tablayout);
+        tabLayout.getTabAt(0).select();
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                                               @Override
+                                               public void onTabSelected(TabLayout.Tab tab) {
+                                                   Log.i("info", "chouette " + tab.getText());
+                                                   if(tab.getText().equals("accelerometer")){
+                                                       Log.i("info", "chouette equals acc");
+                                                       Intent intent = new Intent(context, Accelerometer.class);
+                                                       startActivity(intent);
+                                                   }
+                                               }
+
+                                               @Override
+                                               public void onTabUnselected(TabLayout.Tab tab) {
+
+                                               }
+
+                                               @Override
+                                               public void onTabReselected(TabLayout.Tab tab) {
+
+                                               }
+                                           });
+            //set image
         s = (ImageView) findViewById(R.id.iV_map);
         s.setImageResource(R.drawable.laval);
-
-        context = this;
 
 
         final Button button = findViewById(R.id.btn_test);
@@ -71,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         nfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
     }
+
+
 
     @Override
     protected void onPause() {
@@ -114,5 +144,11 @@ public class MainActivity extends AppCompatActivity {
             Log.e("UnsupportedEncoding", e.toString());
         }
         return text;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        tabLayout.getTabAt(0).select();
     }
 }
