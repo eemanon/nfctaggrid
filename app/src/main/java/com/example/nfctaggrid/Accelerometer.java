@@ -29,8 +29,15 @@ public class Accelerometer extends AppCompatActivity {
     private TextView txt_smoothedX;
     private TextView txt_smoothedY;
     private TextView txt_smoothedZ;
+    private TextView txt_state;
 
     private TabLayout tabLayout;
+
+    private TextView txt_posx;
+    private TextView txt_posy;
+
+    private TextView txt_vectorX;
+    private TextView txt_vectorY;
 
     Queue<Float> samplesX;
     Queue<Float> samplesY;
@@ -38,8 +45,16 @@ public class Accelerometer extends AppCompatActivity {
     int bufferLength;
     SensorEventListener acc;
     private float[] thresholds = {0,0,0};
+    private float[] bufferSums = {0,0,0}; //holds built up buffers
+    private int bufferIterator = 0;           //holds information how many values have been added already
     private boolean calibration = true;
+    private int timeoutSamples;
+    private int timeoutSampleIterator;
+    private float[] position = {0,0};
     private Button btn;
+    private float factor;
+
+    private String mode; //takes values normal, buffer, timeout
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +65,18 @@ public class Accelerometer extends AppCompatActivity {
         txt_x = (TextView) findViewById(R.id.txt_x);
         txt_z = (TextView) findViewById(R.id.txt_z);
         txt_y = (TextView) findViewById(R.id.txt_y);
+        txt_posx = findViewById(R.id.txt_posX);
+        txt_posy = findViewById(R.id.txt_posY);
+        txt_vectorX = findViewById(R.id.txt_vectorX);
+        txt_vectorY = findViewById(R.id.txt_vectorY);
         txt_thresholdX = (TextView) findViewById(R.id.txt_threshold_x);
         txt_thresholdY = (TextView) findViewById(R.id.txt_threshold_y);
         txt_thresholdZ = (TextView) findViewById(R.id.txt_threshold_z);
         txt_smoothedX = (TextView) findViewById(R.id.txt_filterX);
         txt_smoothedY = (TextView) findViewById(R.id.txt_filterY);
         txt_smoothedZ = (TextView) findViewById(R.id.txt_filterZ);
+        txt_state = findViewById(R.id.txt_state);
+        txt_state.setText("normal");
         btn = findViewById(R.id.btn_calibration);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -115,18 +136,57 @@ public class Accelerometer extends AppCompatActivity {
                         float avgX = avg(samplesX);
                         float avgY = avg(samplesY);
                         float avgZ = avg(samplesZ);
-                        if(Math.abs(avgX)>thresholds[0]){
-                            txt_smoothedX.setText(Float.toString(avgX));
-                        } else
-                            txt_smoothedX.setText("0");
-                        if(Math.abs(avgY)>thresholds[1]){
-                            txt_smoothedY.setText(Float.toString(avgY));
-                        } else
-                            txt_smoothedY.setText("0");
-                        if(Math.abs(avgZ)>thresholds[2]){
-                            txt_smoothedZ.setText(Float.toString(avgZ));
-                        } else
-                            txt_smoothedZ.setText("0");
+                        if(mode.equals("normal")){
+                            if(Math.abs(avgX)>thresholds[0]){
+                                mode="buffer";
+                                txt_state.setText("buffer");
+                                bufferSums[0]=avgX;
+                                bufferIterator=bufferLength;
+                                txt_smoothedX.setText(Float.toString(avgX));
+                            } else
+                                txt_smoothedX.setText("0");
+                            if(Math.abs(avgY)>thresholds[1]){
+                                mode="buffer";
+                                txt_state.setText("buffer");
+                                bufferSums[1]=avgY;
+                                bufferIterator=bufferLength;
+                                txt_smoothedY.setText(Float.toString(avgY));
+                            } else
+                                txt_smoothedY.setText("0");
+                        }
+                        if(mode.equals("buffer")){
+                            if(bufferIterator>=0){
+                                bufferSums[0]+=avgX;
+                                bufferSums[1]+=avgY;
+                                txt_state.setText("timeout "+timeoutSampleIterator);
+                                bufferIterator--;
+                            } else {
+                                mode="timeout";
+                                txt_state.setText("timeout "+timeoutSampleIterator);
+                                txt_vectorX.setText(bufferSums[0]+"");
+                                txt_vectorY.setText(bufferSums[1]+"");
+
+                                timeoutSampleIterator=timeoutSamples;
+                            }
+                        }
+                        if(mode.equals("timeout")){
+                            if(timeoutSampleIterator>0){
+                                //go on moving
+                                position[0]+=bufferSums[0]*factor;
+                                position[1]+=bufferSums[1]*factor;
+                                txt_posx.setText(position[0]+"");
+                                txt_posy.setText(position[1]+"");
+                                txt_state.setText("timeout "+timeoutSampleIterator);
+                                // and decrease iterator
+                                if(Math.abs(avgY)>thresholds[1] || Math.abs(avgX)>thresholds[0])
+                                    timeoutSampleIterator=timeoutSamples;
+                                else
+                                    timeoutSampleIterator--;
+                            } else {
+                                mode="normal";
+                                txt_state.setText("normal");
+                            }
+                        }
                     }
                 }
             }
@@ -137,10 +197,15 @@ public class Accelerometer extends AppCompatActivity {
             }
         };
 
+        //Init values
+        factor = 0.5f;
+        mode="normal";
+        timeoutSamples=8;     //completely random I have no clue about this
         samplesX = new LinkedList<Float>();
         samplesY = new LinkedList<Float>();
         samplesZ = new LinkedList<Float>();
         bufferLength = 5;
+        timeoutSampleIterator=0;
         //init queue
         for(int i = 0;i<bufferLength;i++){
             samplesX.add(0.0f);
