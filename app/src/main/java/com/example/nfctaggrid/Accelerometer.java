@@ -46,7 +46,7 @@ public class Accelerometer extends AppCompatActivity {
     SensorEventListener acc;
     private float[] thresholds = {0,0,0};
     private float[] bufferSums = {0,0,0}; //holds built up buffers
-    private int bufferIterator = 0;           //holds information how many values have been added already
+    private int bufferIterator;           //holds information how many values have been added already
     private boolean calibration = true;
     private int timeoutSamples;
     private int timeoutSampleIterator;
@@ -141,16 +141,18 @@ public class Accelerometer extends AppCompatActivity {
                                 mode="buffer";
                                 txt_state.setText("buffer");
                                 bufferSums[0]=avgX;
+                                bufferSums[1]=avgY;
                                 bufferIterator=bufferLength;
-                                txt_smoothedX.setText(Float.toString(avgX));
+                                txt_smoothedX.setText(Float.toString(avgX).substring(0,4));
                             } else
                                 txt_smoothedX.setText("0");
                             if(Math.abs(avgY)>thresholds[1]){
                                 mode="buffer";
                                 txt_state.setText("buffer");
                                 bufferSums[1]=avgY;
+                                bufferSums[0]=avgX;
                                 bufferIterator=bufferLength;
-                                txt_smoothedY.setText(Float.toString(avgY));
+                                txt_smoothedY.setText(Float.toString(avgY).substring(0,4));
                             } else
                                 txt_smoothedY.setText("0");
                         }
@@ -158,7 +160,7 @@ public class Accelerometer extends AppCompatActivity {
                             if(bufferIterator>=0){
                                 bufferSums[0]+=avgX;
                                 bufferSums[1]+=avgY;
-                                txt_state.setText("timeout "+timeoutSampleIterator);
+                                txt_state.setText("buffer "+timeoutSampleIterator);
                                 bufferIterator--;
                             } else {
                                 mode="timeout";
@@ -198,13 +200,13 @@ public class Accelerometer extends AppCompatActivity {
         };
 
         //Init values
-        factor = 0.5f;
+        factor = 0.002f;
         mode="normal";
         timeoutSamples=8;     //completely random I have no clue about this
         samplesX = new LinkedList<Float>();
         samplesY = new LinkedList<Float>();
         samplesZ = new LinkedList<Float>();
-        bufferLength = 5;
+        bufferLength = 15;
         timeoutSampleIterator=0;
         //init queue
         for(int i = 0;i<bufferLength;i++){
@@ -225,7 +227,10 @@ public class Accelerometer extends AppCompatActivity {
         }
         return sum/samples.size();
     }
-
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(acc, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), 10000);
+    }
 
     protected void onPause() {
         super.onPause();
