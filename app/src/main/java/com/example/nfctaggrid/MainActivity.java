@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.UnsupportedEncodingException;
@@ -34,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView s;
     TabLayout tabLayout;
 
-    private float offsetY = 900;
-    private float offsetX = 900;
-    private float scaleValue = 300;
+    private float offsetY = 2600;
+    private float offsetX = 1800;
+    private float scaleValue = 550;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         s.setImageResource(R.drawable.laval);
 
 
-        final Button button = findViewById(R.id.btn_test);
+        final Button button = findViewById(R.id.btn_calibrate);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
