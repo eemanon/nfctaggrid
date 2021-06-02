@@ -135,4 +135,42 @@ tools:context=".Accelerometer">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/graph" />
+
+    <Button
+        android:id="@+id/btn_calibration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="calibration finished"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_posX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="posX"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graph2" />
+
+    <TextView
+        android:id="@+id/txt_posY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="posY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_posX" />
+
+    <TextView
+        android:id="@+id/txt_posZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="posZ"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_posX" />
 </androidx.constraintlayout.widget.ConstraintLayout>
