@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                                            });
             //set image
         s = (ImageView) findViewById(R.id.iV_map);
-        s.setImageResource(R.drawable.laval);
+        //s.setImageResource(R.drawable.laval);
 
         btn_start = findViewById(R.id.btn_start);
         btn_start.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
                                     updateView();
                                     // and decrease iterator
                                     if(Math.abs(avgY)>thresholds[1] || Math.abs(avgX)>thresholds[0])
+                                        //new measurement, reset timer
                                         timeoutSampleIterator=timeoutSamples;
                                     else
                                         timeoutSampleIterator--;

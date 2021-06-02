@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        tools:srcCompat="@drawable/laval" />
+        app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <Button
         android:id="@+id/btn_calibrate"
