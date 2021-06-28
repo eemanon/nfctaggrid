@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String mode; //takes values normal, buffer, timeout
 
-    //device specific
+    //device specific values for map offsets (depends on screen resolution and screen dimensions)
     private float offsetY = 2600;
     private float offsetX = 1800;
     private float scaleValue = 550;
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //get refs
+        //use "Tab" UI elements and init them
         tabLayout = findViewById(R.id.tablayout);
         tabLayout.getTabAt(0).select();
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private float avg(Queue<Float> samples) {
+        //takes a Queue of float values and returns its average
         float sum = 0.0f;
         for(float number : samples){
             sum+=number;
@@ -260,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getTagInfo(Intent intent) {
+        //takes an intent and parses NFC content from the read tag
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
         NdefMessage ndefMessage = (NdefMessage) rawMsgs[0];
@@ -288,11 +291,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateView() {
+        //moves the map depending on current position values
         s.setX(-x*scaleValue+offsetX);
         s.setY(-y*scaleValue+offsetY);
     }
 
     private String processRtdTextRecord(byte[] payload) {
+        //decodes a payload of a NFC tag and returns it as plain text
         String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
         int languageCodeLength = payload[0] & 0063;
 

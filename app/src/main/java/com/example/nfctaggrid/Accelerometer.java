@@ -61,7 +61,7 @@ public class Accelerometer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accelerometer);
 
-        //get layout refs
+        //1 get layout refs
         txt_x = (TextView) findViewById(R.id.txt_x);
         txt_z = (TextView) findViewById(R.id.txt_z);
         txt_y = (TextView) findViewById(R.id.txt_y);
@@ -82,6 +82,7 @@ public class Accelerometer extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //init variable that tracks if we search a max threshold or not
                 calibration = false;
             }
         });
